@@ -1,0 +1,2 @@
+Fender,Stratocaster,electric,Alder,Maple,SN123,999.99
+Gibson,Les Paul,electric,Mahogany,Maple,SN456,1499.99

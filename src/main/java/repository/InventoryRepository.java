@@ -4,82 +4,117 @@ import model.Builder;
 import model.Guitar;
 import model.Type;
 import model.Wood;
+import org.springframework.stereotype.Component;
 
-import java.awt.*;
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 
+
+@Component
 public class InventoryRepository {
+    private static final String NEW_LINE = System.lineSeparator();
+    private static final String DATABASE_NAME = "guitars_database.txt";
+    private List<Guitar> guitars = new ArrayList<>();
 
-        private static final String DATABASE_FILE = "guitars_database.txt";
+    public InventoryRepository() {
+        clearDatabaseFile();
+    }
 
-        public static void addGuitar(Guitar guitar) {
-            try (PrintWriter writer = new PrintWriter(new FileWriter(DATABASE_FILE, true))) {
-                writer.println(guitarToString(guitar));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void clearDatabaseFile() {
+        Path path = Paths.get(DATABASE_NAME);
+        try {
+            Files.deleteIfExists(path);
+            Files.createFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        public Guitar getGuitar(String serialNumber) {
-            try (Scanner scanner = new Scanner(new File(DATABASE_FILE))) {
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    Guitar guitar = stringToGuitar(line);
-                    if (guitar.getSerialNumber().equals(serialNumber)) {
-                        return guitar;
-                    }
+    private static void appendToFile(Path path, String content) throws IOException {
+        Files.write(path, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    public boolean addGuitar(Guitar guitarData) throws IOException {
+        Path path = Paths.get(DATABASE_NAME);
+        String data = guitarData.getSerialNumber() + "," + guitarData.getPrice() + "," + guitarData.getBuilder() + "," + guitarData.getModel() + "," + guitarData.getType().toString() + "," + guitarData.getBackWood() + "," + guitarData.getTopWood();
+        System.out.println(data);
+        appendToFile(path, data + NEW_LINE);
+
+        guitars.add(guitarData);
+
+        return true;
+    }
+
+
+    public Guitar getGuitar(String serialNumber) throws IOException {
+        Path path = Paths.get(DATABASE_NAME);
+
+        // Use BufferedReader to read the file line by line. Easier to work with in my opinion.
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] words = line.split(",");
+
+                if (words.length < 2) {
+                    continue;
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
 
-        public ArrayList<Guitar> search(Guitar searchCriteria) {
-            ArrayList<Guitar> matchingGuitars = new ArrayList<>();
-            try (Scanner scanner = new Scanner(new File(DATABASE_FILE))) {
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    Guitar guitar = stringToGuitar(line);
-                    if (matchesSearchCriteria(guitar, searchCriteria)) {
-                        matchingGuitars.add(guitar);
-                    }
+                if (words[0].equals(serialNumber)) {
+                    double price = Double.parseDouble(words[1]);
+                    Builder builderEnum = Builder.valueOf(words[2].toUpperCase());
+                    String model = words[3];
+                    Type typeEnum = Type.valueOf(words[4].toUpperCase());
+                    Wood backWoodEnum = Wood.valueOf(words[5].toUpperCase());
+                    Wood topWoodEnum = Wood.valueOf(words[6].toUpperCase());
+
+                    return new Guitar(serialNumber, price, builderEnum, model, typeEnum, backWoodEnum, topWoodEnum);
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
-            return matchingGuitars;
         }
 
-        //Helper method for search
-        private boolean matchesSearchCriteria(Guitar guitar, Guitar searchCriteria) {
-            return (searchCriteria.getBuilder() == null || searchCriteria.getBuilder().equals(guitar.getBuilder())) &&
-                    (searchCriteria.getBackWood() == null || searchCriteria.getBackWood().equals(guitar.getBackWood()));
+        return null;
+    }
+
+    public List<Guitar> search(Guitar searchGuitar) {
+        System.out.println("ran here too");
+        List<Guitar> matchingGuitars = new ArrayList<>();
+
+
+        for (Guitar guitar : guitars) {
+            System.out.println(guitar);
+            System.out.println("----------");
+            System.out.println(searchGuitar);
+
+            if (searchGuitar.getBuilder() != guitar.getBuilder())
+                continue;
+
+            if (searchGuitar.getType() != guitar.getType())
+                continue;
+
+            if (searchGuitar.getBackWood() != guitar.getBackWood())
+                continue;
+
+            if (searchGuitar.getTopWood() != guitar.getTopWood())
+                continue;
+
+            matchingGuitars.add(guitar);
         }
 
-        //Helper method that converts a guitar to a String
-        private static String guitarToString(Guitar guitar) {
-            return String.format("%s,%s,%s,%s,%s,%s,%s",
-                    guitar.getBuilder().toString(), guitar.getModel(), guitar.getType().toString(),
-                    guitar.getBackWood().toString(), guitar.getTopWood().toString(),
-                    guitar.getSerialNumber(), guitar.getPrice());
-        }
+        return matchingGuitars;
+    }
 
-        //Helper method that converts a string to a guitar
-        Guitar stringToGuitar(String line) {
-            String[] parts = line.split(",");
-            Guitar guitar = new Guitar();
-            guitar.setBuilder(Builder.valueOf(parts[0]));
-            guitar.setModel(parts[1]);
-            guitar.setType(Type.valueOf(parts[2]));
-            guitar.setBackWood(Wood.valueOf(parts[3]));
-            guitar.setTopWood(Wood.valueOf(parts[4]));
-            guitar.setSerialNumber(parts[5]);
-            guitar.setPrice(Float.parseFloat(parts[6]));
-            return guitar;
-        }
+
+
+
 }
+

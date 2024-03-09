@@ -1,113 +1,79 @@
-
-
 package repository;
 
 import model.Builder;
+import model.Guitar;
 import model.Type;
 import model.Wood;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import model.Guitar;
-
-
-import java.io.*;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-
-
 class InventoryRepositoryTest {
 
-    private InventoryRepository repository;
+    private InventoryRepository inventoryRepository;
 
     @BeforeEach
     void setUp() {
-        repository = new InventoryRepository();
+        inventoryRepository = new InventoryRepository();
+    }
+
+
+    @Test
+    void searchNoMatch() throws IOException {
+        inventoryRepository.addGuitar(new Guitar("103", 1200.0, Builder.GIBSON, "Model1", Type.ACOUSTIC, Wood.MAHOGANY, Wood.CEDAR));
+
+        // Search for guitars with specifications that have no matches
+        Guitar searchGuitar = new Guitar(null, 1200.0, Builder.FENDER, null, Type.ELECTRIC, Wood.MAPLE, Wood.SITKA);
+        List<Guitar> searchResults = inventoryRepository.search(searchGuitar);
+
+        assertTrue(((List<?>) searchResults).isEmpty());
+    }
+
+
+    @Test
+    void addGuitar() throws IOException {
+        InventoryRepository inventoryRepository = new InventoryRepository();
+        inventoryRepository.addGuitar(new Guitar("101", 1200.0, Builder.FENDER, "Model1", Type.ACOUSTIC, Wood.MAHOGANY, Wood.CEDAR));
+
+        Guitar foundGuitar = inventoryRepository.getGuitar("101");
+        assertNotNull(foundGuitar);
+        assertEquals("101", foundGuitar.getSerialNumber());
+        assertEquals(1200.0, foundGuitar.getPrice());
+        assertEquals(Builder.FENDER, foundGuitar.getBuilder());
+        assertEquals("Model1", foundGuitar.getModel());
+        assertEquals(Type.ACOUSTIC, foundGuitar.getType());
+        assertEquals(Wood.MAHOGANY, foundGuitar.getBackWood());
+        assertEquals(Wood.CEDAR, foundGuitar.getTopWood());
     }
 
     @Test
-    void addGuitar() {
-        Guitar guitarToAdd = new Guitar(Builder.FENDER, "Stratocaster", Type.ELECTRIC, Wood.ALDER, Wood.MAPLE, "SN123", 999.99);
-        repository.addGuitar(guitarToAdd);
-        Guitar retrievedGuitar = findGuitarInFile(guitarToAdd.getSerialNumber());
-        assertNotNull(retrievedGuitar);
-        assertEquals(guitarToAdd.getBuilder(), retrievedGuitar.getBuilder());
+    void getGuitar() throws IOException {
+        InventoryRepository inventoryRepository = new InventoryRepository();
+        inventoryRepository.addGuitar(new Guitar("102", 1200.0, Builder.MARTIN, "Model2", Type.ELECTRIC, Wood.MAPLE, Wood.SITKA));
+
+        Guitar foundGuitar = inventoryRepository.getGuitar("102");
+        assertNotNull(foundGuitar);
+        assertEquals("102", foundGuitar.getSerialNumber());
+        assertEquals(1200.0, foundGuitar.getPrice());
+        assertEquals(Builder.MARTIN, foundGuitar.getBuilder());
+        assertEquals("Model2", foundGuitar.getModel());
+        assertEquals(Type.ELECTRIC, foundGuitar.getType());
+        assertEquals(Wood.MAPLE, foundGuitar.getBackWood());
+        assertEquals(Wood.SITKA, foundGuitar.getTopWood());
     }
 
     @Test
-    void addMultipleGuitars() {
+    void search() throws IOException {
+        InventoryRepository inventoryRepository = new InventoryRepository();
+        inventoryRepository.addGuitar(new Guitar("103", 1200.0, Builder.GIBSON, "Model1", Type.ACOUSTIC, Wood.MAHOGANY, Wood.CEDAR));
+        inventoryRepository.addGuitar(new Guitar("109", 1200.0, Builder.GIBSON, "Model2", Type.ACOUSTIC, Wood.MAHOGANY, Wood.CEDAR));
 
-        Guitar guitar1 = new Guitar(Builder.FENDER, "Stratocaster", Type.ELECTRIC, Wood.ALDER, Wood.MAPLE, "SN123", 999.99);
-        Guitar guitar2 = new Guitar(Builder.GIBSON, "Les Paul", Type.ELECTRIC, Wood.MAHOGANY, Wood.MAPLE, "SN456", 1499.99);
 
-
-        repository.addGuitar(guitar1);
-        repository.addGuitar(guitar2);
-
-        Guitar retrievedGuitar1 = findGuitarInFile(guitar1.getSerialNumber());
-        assertNotNull(retrievedGuitar1);
-        assertEquals(guitar1.getSerialNumber(), retrievedGuitar1.getSerialNumber());
-
-        Guitar retrievedGuitar2 = findGuitarInFile(guitar2.getSerialNumber());
-        assertNotNull(retrievedGuitar2);
-        assertEquals(guitar2.getSerialNumber(), retrievedGuitar2.getSerialNumber());
+        Guitar searchGuitar = new Guitar(null, 1200.0, Builder.GIBSON, null, Type.ACOUSTIC, Wood.MAHOGANY, Wood.CEDAR);
+        assertEquals(2, inventoryRepository.search(searchGuitar).size());
     }
 
-    @Test
-    void getGuitar() {
-        Guitar guitarToAdd = new Guitar(Builder.FENDER, "Stratocaster", Type.ELECTRIC, Wood.ALDER, Wood.MAPLE, "SN123", 999.99);
-        repository.addGuitar(guitarToAdd);
-        Guitar retrievedGuitar = repository.getGuitar("SN123");
-        assertNotNull(retrievedGuitar);
-        assertEquals(guitarToAdd.getSerialNumber(), retrievedGuitar.getSerialNumber());
-
-    }
-
-    @Test
-    void search() {
-        clearDatabase();
-        Guitar guitar1 = new Guitar(Builder.FENDER, "Stratocaster", Type.ELECTRIC, Wood.ALDER, Wood.MAPLE, "SN123", 999.99);
-        Guitar guitar2 = new Guitar(Builder.GIBSON, "Les Paul", Type.ELECTRIC, Wood.MAHOGANY, Wood.MAPLE, "SN456", 1499.99);
-        repository.addGuitar(guitar1);
-        repository.addGuitar(guitar2);
-        Guitar searchCriteria = new Guitar(Builder.FENDER, null, null, Wood.ALDER, null, null, -1);
-        List<Guitar> matchingGuitars = repository.search(searchCriteria);
-
-
-        assertNotNull(matchingGuitars);
-        assertEquals(1, matchingGuitars.size());
-        assertEquals(guitar1.getSerialNumber(), matchingGuitars.get(0).getSerialNumber());
-    }
-
-    // Helper method to find a guitar in the file by serial number
-    private Guitar findGuitarInFile(String serialNumber)
-    {
-        try {
-            File file = new File("guitars_database.txt");
-            java.util.Scanner scanner = new java.util.Scanner(file);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                Guitar guitar = new InventoryRepository().stringToGuitar(line);
-                if (guitar.getSerialNumber().equals(serialNumber)) {
-                    return guitar;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void clearDatabase(){
-        String filePath = "C:\\c322-spring2024-homework-2\\guitars_database.txt";
-
-        try (FileWriter fileWriter = new FileWriter(filePath, false)) {
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -5,7 +5,7 @@ import javax.swing.plaf.PanelUI;
 public enum Wood {
 
     INDIAN_ROSEWOOD, BRAZILIAN_ROSEWOOD, MAHOGANY, MAPLE,
-    COCOBOLO, CEDAR, ADIRONDACK, ALDER, SITKA;
+    COCOBOLO, CEDAR, ADIRONDACK, ALDER, SITKA, ROSEWOOD;
 
     public String toString() {
         switch (this) {

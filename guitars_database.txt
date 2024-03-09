@@ -1,2 +1,1 @@
-Fender,Stratocaster,electric,Alder,Maple,SN123,999.99
-Gibson,Les Paul,electric,Mahogany,Maple,SN456,1499.99
+102,1200.0,Martin,Model2,electric,Maple,Sitka

@@ -1,4 +1,4 @@
-package model;
+package com.example.c322spring2024homework2.model;
 
 public enum Builder {
 

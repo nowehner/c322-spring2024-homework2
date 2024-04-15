@@ -1,15 +1,14 @@
-package controllers;
+package com.example.c322spring2024homework2.controllers;
 
 
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import repository.CustomerRepository;
-import model.Customer;
-import security.TokenService;
+import com.example.c322spring2024homework2.repository.CustomerRepository;
+import com.example.c322spring2024homework2.model.Customer;
+import com.example.c322spring2024homework2.security.TokenService;
 
 @RestController
 @CrossOrigin

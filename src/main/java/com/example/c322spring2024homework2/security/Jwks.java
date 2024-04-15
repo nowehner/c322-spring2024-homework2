@@ -1,7 +1,7 @@
-package security;
+package com.example.c322spring2024homework2.security;
 
 import java.security.KeyPair;
-import java.security.KeyPair;
+
 import com.nimbusds.jose.jwk.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;

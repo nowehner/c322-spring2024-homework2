@@ -1,9 +1,10 @@
 package repository;
 
-import model.Builder;
-import model.Guitar;
-import model.Type;
-import model.Wood;
+import com.example.c322spring2024homework2.model.Builder;
+import com.example.c322spring2024homework2.model.Guitar;
+import com.example.c322spring2024homework2.model.Type;
+import com.example.c322spring2024homework2.model.Wood;
+import com.example.c322spring2024homework2.repository.InventoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;

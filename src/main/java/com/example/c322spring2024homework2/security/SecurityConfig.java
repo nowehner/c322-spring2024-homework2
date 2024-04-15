@@ -1,7 +1,6 @@
-package security;
+package com.example.c322spring2024homework2.security;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;

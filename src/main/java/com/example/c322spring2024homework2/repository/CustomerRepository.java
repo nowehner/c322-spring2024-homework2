@@ -1,8 +1,8 @@
-package repository;
+package com.example.c322spring2024homework2.repository;
 
 
 
-import model.Customer;
+import com.example.c322spring2024homework2.model.Customer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 

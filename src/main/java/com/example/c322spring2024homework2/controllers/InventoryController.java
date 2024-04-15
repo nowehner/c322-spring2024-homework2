@@ -1,11 +1,11 @@
-package controllers;
+package com.example.c322spring2024homework2.controllers;
 
 
-import model.Builder;
-import model.Guitar;
-import model.Type;
-import model.Wood;
-import repository.InventoryRepository;
+import com.example.c322spring2024homework2.model.Builder;
+import com.example.c322spring2024homework2.model.Guitar;
+import com.example.c322spring2024homework2.model.Type;
+import com.example.c322spring2024homework2.model.Wood;
+import com.example.c322spring2024homework2.repository.InventoryRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

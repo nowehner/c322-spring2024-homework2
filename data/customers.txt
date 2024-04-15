@@ -1,0 +1,2 @@
+john,$2a$10$DMhoJsMFLjjaLeKxKPXz8Ojq6bvgvPYyW3uFATNrvSkn.BLxoKBu6,john@email.com
+nowehner,$2a$10$xyVK2iWrv/35iDw9tYSbgevg1trUNXJQk9YX/jdqPGHgAxbYe54Va,nowehner@gmail.com

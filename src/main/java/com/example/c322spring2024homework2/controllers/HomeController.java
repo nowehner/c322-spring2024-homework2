@@ -1,4 +1,4 @@
-package controllers;
+package com.example.c322spring2024homework2.controllers;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

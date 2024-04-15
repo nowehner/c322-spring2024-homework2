@@ -1,9 +1,9 @@
-package repository;
+package com.example.c322spring2024homework2.repository;
 
-import model.Builder;
-import model.Guitar;
-import model.Type;
-import model.Wood;
+import com.example.c322spring2024homework2.model.Builder;
+import com.example.c322spring2024homework2.model.Guitar;
+import com.example.c322spring2024homework2.model.Type;
+import com.example.c322spring2024homework2.model.Wood;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 
 
